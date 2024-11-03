@@ -100,6 +100,33 @@ def get_all_courses():
     return jsonify(course_list), 200
 
 
+@app.route('/student/<int:student_id>/courses', methods=['GET'])
+def get_student_courses(student_id):
+    # Query the Grades table to get all course IDs for the student
+    student_courses = Grades.query.filter_by(studentID=student_id).all()
+    
+    # If the student is not enrolled in any courses, return an empty list
+    if not student_courses:
+        return jsonify({"message": f"No courses found for student with ID {student_id}"}), 404
+    
+    # Get course details for each course the student is enrolled in
+    course_list = []
+    for student_course in student_courses:
+        course = Courses.query.filter_by(courseID=student_course.courseID).first()
+        if course:
+            course_list.append({
+                "courseID": course.courseID,
+                "courseName": course.courseName,
+                "teacherID": course.teacherID,
+                "courseTimes": course.courseTimes,
+                "maxStudents": course.maxStudents,
+                "currentStudents": course.currentStudents
+            })
+    
+    return jsonify(course_list), 200
+
+
+
 
 
 if __name__ == '__main__':
