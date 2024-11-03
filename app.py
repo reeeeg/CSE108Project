@@ -14,6 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 admin = Admin(app, name='Admin Page', template_mode='bootstrap3')
 
+app.config['SECRET_KEY'] = '9/11'
 
 class Login(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,7 +41,6 @@ class Students(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     studentID = db.Column(db.Integer, nullable=False)
     studentName = db.Column(db.String(80), nullable=True)
-    courseID = db.Column(db.Integer, nullable=False)
 
 
 class Teachers(db.Model):
