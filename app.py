@@ -16,13 +16,13 @@ admin = Admin(app, name='Admin Page', template_mode='bootstrap3')
 
 
 class Login(db.Model):
-    pk = db.Column(db.Integer, primary_key=True)
-    studentIDteacherID = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    studentIDteacherID = db.Column(db.Integer, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     isTeacher = db.Column(db.Boolean)
 
 class Courses(db.Model):
-    pk = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     courseID = db.Column(db.Integer, nullable=False)
     courseName = db.Column(db.String(80), nullable=False)
     teacherID = db.Column(db.Integer, nullable=False)
@@ -31,20 +31,20 @@ class Courses(db.Model):
     currentStudents = db.Column(db.Integer, nullable=False)
 
 class Grades(db.Model):
-    pk = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     studentID = db.Column(db.Integer, nullable=False)
     courseID = db.Column(db.Integer, nullable=False)
     grade = db.Column(db.Integer, nullable=False)
 
 class Students(db.Model):
-    pk = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     studentID = db.Column(db.Integer, nullable=False)
     studentName = db.Column(db.String(80), nullable=True)
     courseID = db.Column(db.Integer, nullable=False)
 
 
 class Teachers(db.Model):
-    pk = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     teacherID = db.Column(db.Integer, nullable=False)
     teacherName = db.Column(db.String(80), nullable=False)
     courseID = db.Column(db.Integer, nullable=False)
