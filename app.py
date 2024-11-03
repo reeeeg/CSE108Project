@@ -47,7 +47,6 @@ class Teachers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     teacherID = db.Column(db.Integer, nullable=False)
     teacherName = db.Column(db.String(80), nullable=False)
-    courseID = db.Column(db.Integer, nullable=False)
 
 
 with app.app_context():
