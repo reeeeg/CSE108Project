@@ -17,7 +17,7 @@ admin = Admin(app, name='Admin Page', template_mode='bootstrap3')
 
 class Login(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    studentIDteacherID = db.Column(db.Integer, nullable=False)
+    userID = db.Column(db.Integer, nullable=False)
     password = db.Column(db.String(80), nullable=False)
     isTeacher = db.Column(db.Boolean)
 
@@ -26,7 +26,7 @@ class Courses(db.Model):
     courseID = db.Column(db.Integer, nullable=False)
     courseName = db.Column(db.String(80), nullable=False)
     teacherID = db.Column(db.Integer, nullable=False)
-    daysTime = db.Column(db.String(80), nullable=False)
+    courseTimes = db.Column(db.String(80), nullable=False)
     maxStudents = db.Column(db.Integer, nullable=False)
     currentStudents = db.Column(db.Integer, nullable=False)
 
