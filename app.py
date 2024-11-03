@@ -83,6 +83,23 @@ def add_student():
     
     return jsonify({"message": f"Student {student_name} added with ID {new_student_id}"}), 201
 
+@app.route('/courses', methods=['GET'])
+def get_all_courses():
+    courses = Courses.query.all()
+    course_list = [
+        {
+            "courseID": course.courseID,
+            "courseName": course.courseName,
+            "teacherID": course.teacherID,
+            "courseTimes": course.courseTimes,
+            "maxStudents": course.maxStudents,
+            "currentStudents": course.currentStudents
+        }
+        for course in courses
+    ]
+    return jsonify(course_list), 200
+
+
 
 
 if __name__ == '__main__':
