@@ -2,6 +2,8 @@ import json
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 app = Flask(__name__)
 CORS(app)
@@ -10,6 +12,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///databases.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+admin = Admin(app, name='Admin Page', template_mode='bootstrap3')
+
 
 class Login(db.Model):
     studentIDteacherID = db.Column(db.Integer, primary_key=True)
@@ -45,3 +49,17 @@ with app.app_context():
     db.create_all()
 
 
+admin.add_view(ModelView(Login, db.session))
+admin.add_view(ModelView(Courses, db.session))
+admin.add_view(ModelView(Grades, db.session))
+admin.add_view(ModelView(Students, db.session))
+admin.add_view(ModelView(Teachers, db.session))
+
+
+@app.route('/')
+def home():
+    return "<h1>Welcome to the Admin Interface</h1><p>Go to <a href='/admin'>Admin Page</a> to manage the database.</p>"
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
