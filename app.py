@@ -64,6 +64,26 @@ admin.add_view(ModelView(Teachers, db.session))
 def home():
     return "<h1>Welcome to the Admin Interface</h1><p>Go to <a href='/admin'>Admin Page</a> to manage the database.</p>"
 
+@app.route('/student/add', methods=['POST'])
+def add_student():
+    data = request.json
+    student_name = data.get('studentName')
+
+    if not student_name:
+        return jsonify({"message": "Student name is required"}), 400
+
+    # Get the current maximum studentID and add 1 to it
+    max_student = db.session.query(db.func.max(Students.studentID)).scalar()
+    new_student_id = (max_student or 0) + 1
+
+    # Create a new student
+    new_student = Students(studentID=new_student_id, studentName=student_name)
+    db.session.add(new_student)
+    db.session.commit()
+    
+    return jsonify({"message": f"Student {student_name} added with ID {new_student_id}"}), 201
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
