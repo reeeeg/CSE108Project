@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../canva2/build')
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///databases.db'
@@ -60,9 +60,19 @@ admin.add_view(ModelView(Students, db.session))
 admin.add_view(ModelView(Teachers, db.session))
 
 
+# @app.route('/')
+# def home():
+#     return "<h1>Welcome to the Admin Interface</h1><p>Go to <a href='/admin'>Admin Page</a> to manage the database.</p>"
+
+# Serve the React app's index.html
 @app.route('/')
-def home():
-    return "<h1>Welcome to the Admin Interface</h1><p>Go to <a href='/admin'>Admin Page</a> to manage the database.</p>"
+def serve_react_app():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# Serve other static files (JS, CSS, etc.)
+@app.route('/<path:path>')
+def static_proxy(path):
+    return send_from_directory(app.static_folder, path)
 
 @app.route('/student/add', methods=['POST'])
 def add_student():
