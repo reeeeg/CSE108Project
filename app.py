@@ -74,6 +74,31 @@ def serve_react_app():
 def static_proxy(path):
     return send_from_directory(app.static_folder, path)
 
+
+#getting teacher name
+def get_teacher_name(teacher_id):
+    teacher = Teachers.query.filter_by(teacherID=teacher_id).first()
+    
+    if not teacher:
+        return jsonify({"message": "Teacher not found"}), 404
+    
+    return jsonify({"teacherID": teacher.teacherID, "teacherName": teacher.teacherName}), 200
+
+
+#getting student name
+
+@app.route('/student/<int:student_id>', methods=['GET'])
+def get_student_name(student_id):
+    student = Students.query.filter_by(studentID=student_id).first()
+    
+    if not student:
+        return jsonify({"message": "Student not found"}), 404
+    
+    return jsonify({"studentID": student.studentID, "studentName": student.studentName}), 200
+
+
+
+
 @app.route('/student/add', methods=['POST'])
 def add_student():
     data = request.json
@@ -124,10 +149,12 @@ def get_student_courses(student_id):
     for student_course in student_courses:
         course = Courses.query.filter_by(courseID=student_course.courseID).first()
         if course:
+            teacher = Teachers.query.filter_by(teacherID=course.teacherID)
             course_list.append({
                 "courseID": course.courseID,
                 "courseName": course.courseName,
                 "teacherID": course.teacherID,
+                "teacherName": teacher.teacherName if teacher else "Unknown",
                 "courseTimes": course.courseTimes,
                 "maxStudents": course.maxStudents,
                 "currentStudents": course.currentStudents
@@ -135,6 +162,123 @@ def get_student_courses(student_id):
     
     return jsonify(course_list), 200
 
+
+#student enrollment
+@app.route('/student/<int:student_id>/enroll', methods=['POST'])
+def enroll_in_course(student_id):
+    data = request.json
+    course_id = data.get('courseID')
+    
+    if not course_id:
+        return jsonify({"message": "Course ID is required to enroll"}), 400
+
+    # Check if course exists and has space
+    course = Courses.query.filter_by(courseID=course_id).first()
+    if not course:
+        return jsonify({"message": "Course not found"}), 404
+    if course.currentStudents >= course.maxStudents:
+        return jsonify({"message": "Course is full"}), 400
+    
+    # Check if student is already enrolled
+    existing_enrollment = Grades.query.filter_by(studentID=student_id, courseID=course_id).first()
+    if existing_enrollment:
+        return jsonify({"message": "Student is already enrolled in this course"}), 400
+
+    # Enroll student
+    new_grade = Grades(studentID=student_id, courseID=course_id, grade=0)
+    course.currentStudents += 1
+    db.session.add(new_grade)
+    db.session.commit()
+    
+    return jsonify({"message": "Enrollment successful"}), 201
+
+#student unenrollment
+
+@app.route('/student/<int:student_id>/unenroll', methods=['DELETE'])
+def unenroll_from_course(student_id):
+    data = request.json
+    course_id = data.get('courseID')
+    
+    if not course_id:
+        return jsonify({"message": "Course ID is required to unenroll"}), 400
+
+    # Check if enrollment exists
+    enrollment = Grades.query.filter_by(studentID=student_id, courseID=course_id).first()
+    if not enrollment:
+        return jsonify({"message": "Student is not enrolled in this course"}), 404
+
+    # Unenroll student
+    db.session.delete(enrollment)
+    course = Courses.query.filter_by(courseID=course_id).first()
+    if course:
+        course.currentStudents -= 1
+    db.session.commit()
+    
+    return jsonify({"message": "Unenrollment successful"}), 200
+
+
+#teacher primary view
+
+@app.route('/courses/<int:teacher_id>/courses', methods=['GET'])
+def get_teacher_courses(teacher_id):
+
+    teacher = Teachers.query.filter_by(teacherID=teacher_id).first()
+    if not teacher:
+        return jsonify({"message": "Teacher not found"}), 404
+
+    teacher_courses = Courses.query.filter_by(teacherID=teacher_id).all()
+    
+    course_list = [
+        {
+            "courseID": course.courseID,
+            "courseName": course.courseName,
+            "teacherID": course.teacherID,
+            "courseTimes": course.courseTimes,
+            "maxStudents": course.maxStudents,
+            "currentStudents": course.currentStudents
+        }
+        for course in teacher_courses
+    ]
+    
+    return jsonify(course_list), 200
+#teacher specific course view
+
+@app.route('/grades/<int:course_id>/students', methods=['GET'])
+def get_students_in_course(course_id):
+    # Get all students and their grades in the course
+    students_in_course = Grades.query.filter_by(courseID=course_id).all()
+    
+    student_list = []
+    for enrollment in students_in_course:
+        student = Students.query.filter_by(studentID=enrollment.studentID).first()
+        student_list.append({
+            "studentID": enrollment.studentID,
+            "studentName": student.studentName if student else "Unknown",
+            "courseID": enrollment.courseID,
+            "grade": enrollment.grade
+        })
+        
+    
+    return jsonify(student_list), 200
+
+@app.route('/grades/<int:course_id>/students/<int:student_id>', methods=['POST'])
+def update_student_grade(course_id, student_id):
+    
+    data = request.json
+    new_grade = data.get('grade')
+
+    if new_grade is None:
+        return jsonify({"message": "Grade is required"}), 400
+
+    # Find enrollment and update grade
+    enrollment = Grades.query.filter_by(courseID=course_id, studentID=student_id).first()
+    if not enrollment:
+        return jsonify({"message": "Student not found in this course"}), 404
+
+    enrollment.grade = new_grade
+    db.session.commit()
+    
+    return jsonify({"message": "Grade updated successfully"}), 200
 
 
 
