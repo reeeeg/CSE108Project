@@ -3,39 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Entry</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <title>Dashboard - UCM University</title>
+    <link rel="stylesheet" href="/templates/student.css">
 </head>
 <body>
-    <div class="student-container">
-        <h2>Current Courses</h2>
-        <table id="current-courses-table">
-            <thead>
-                <tr>
-                    <th>Course Name</th>
-                    <th>Teacher</th>
-                    <th>Day/Time</th>
-                    <th>Students Enrolled</th>
-                </tr>
-            </thead>
-            <tbody id="current-courses-tbody"></tbody>
-        </table>
+    <div class="dashboard-container">
+        <header>
+            <h1>UCM University</h1>
+            <a href="#" class="signout-link">Sign out</a>
+        </header>
+        
+        <h2>Welcome, [Name]!</h2>
 
-        <h2>All Courses</h2>
-        <table id="all-courses-table">
-            <thead>
-                <tr>
-                    <th>Course Name</th>
-                    <th>Teacher</th>
-                    <th>Time</th>
-                    <th>Students Enrolled</th>
-                    <th>Add/Drop Class</th>
-                </tr>
-            </thead>
-            <tbody id="all-courses-tbody"></tbody>
-        </table>
+        <div class="course-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Teacher</th>
+                        <th>Time</th>
+                        <th>Students Enrolled</th>
+                        <th>Add class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Physics 121</td>
+                        <td>Susan Walker</td>
+                        <td>TR 11:00-11:50 AM</td>
+                        <td>5/10</td>
+                        <td><button class="remove-button">−</button></td>
+                    </tr>
+                    <tr>
+                        <td>CS 106</td>
+                        <td>Ammon Hepworth</td>
+                        <td>MWF 2:00-2:50 PM</td>
+                        <td>4/10</td>
+                        <td><button class="remove-button">−</button></td>
+                    </tr>
+                    <tr>
+                        <td>Math 101</td>
+                        <td>Ralph Jenkins</td>
+                        <td>MWF 10:00-10:50 AM</td>
+                        <td>4/8</td>
+                        <td><button class="add-button">+</button></td>
+                    </tr>
+                    <tr>
+                        <td>CS 162</td>
+                        <td>Ammon Hepworth</td>
+                        <td>TR 3:00-3:50 PM</td>
+                        <td>4/4</td>
+                        <td><button class="remove-button">−</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <script src="../static/student_script.js"></script>
 </body>
 </html>
