@@ -35,7 +35,7 @@ class Grades(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     studentID = db.Column(db.Integer, nullable=False)
     courseID = db.Column(db.Integer, nullable=False)
-    grade = db.Column(db.Integer, nullable=False)
+    grade = db.Column(db.Integer, nullable=True)
 
 class Students(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +93,7 @@ def add_student():
     
     return jsonify({"message": f"Student {student_name} added with ID {new_student_id}"}), 201
 
-@app.route('/courses', methods=['GET'])
+@app.route('/api/courses', methods=['GET'])
 def get_all_courses():
     courses = Courses.query.all()
     course_list = [
@@ -110,14 +110,14 @@ def get_all_courses():
     return jsonify(course_list), 200
 
 
-@app.route('/student/<int:student_id>/courses', methods=['GET'])
+@app.route('/api/student/<int:student_id>/courses', methods=['GET'])
 def get_student_courses(student_id):
     # Query the Grades table to get all course IDs for the student
     student_courses = Grades.query.filter_by(studentID=student_id).all()
     
     # If the student is not enrolled in any courses, return an empty list
     if not student_courses:
-        return jsonify({"message": f"No courses found for student with ID {student_id}"}), 404
+        return jsonify([]), 200
     
     # Get course details for each course the student is enrolled in
     course_list = []
@@ -137,6 +137,140 @@ def get_student_courses(student_id):
 
 
 
+
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.json
+    user_id = data.get('userID')
+    password = data.get('password')
+    is_teacher = data.get('isTeacher')
+
+    # Check if a user with the given userID and isTeacher status exists
+    user = Login.query.filter_by(userID=user_id, isTeacher=is_teacher).first()
+
+    # Validate password if user is found
+    if user and user.password == password:
+        return jsonify({"success": True, "userID": user_id, "isTeacher": is_teacher})
+    else:
+        return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+
+
+@app.route('/api/student/<int:student_id>/courses/add', methods=['POST'])
+def add_course(student_id):
+    data = request.json
+    course_id = data.get('courseID')
+
+    # Check if the course exists
+    course = Courses.query.filter_by(courseID=course_id).first()
+    if not course:
+        return jsonify({"message": "Course not found"}), 404
+
+    # Check if the course is full
+    if course.currentStudents >= course.maxStudents:
+        return jsonify({"message": "Course is full"}), 400
+
+    # Check if the student is already enrolled
+    enrollment = Grades.query.filter_by(studentID=student_id, courseID=course_id).first()
+    if enrollment:
+        return jsonify({"message": "Student already enrolled"}), 400
+
+    # Add student to the course
+    new_enrollment = Grades(studentID=student_id, courseID=course_id, grade=0)  # Default grade is set to 0
+    db.session.add(new_enrollment)
+    
+    # Update the current student count in the course
+    course.currentStudents = Grades.query.filter_by(courseID=course_id).count()
+    db.session.commit()
+
+    return jsonify({"message": "Course added successfully", "updatedCourse": {
+        "courseID": course.courseID,
+        "courseName": course.courseName,
+        "teacherID": course.teacherID,
+        "courseTimes": course.courseTimes,
+        "maxStudents": course.maxStudents,
+        "currentStudents": course.currentStudents
+    }}), 201
+
+
+
+@app.route('/api/student/<int:student_id>/courses/drop', methods=['POST'])
+def drop_course(student_id):
+    data = request.json
+    course_id = data.get('courseID')
+
+    # Find the enrollment to remove
+    enrollment = Grades.query.filter_by(studentID=student_id, courseID=course_id).first()
+    if not enrollment:
+        return jsonify({"message": "Enrollment not found"}), 404
+
+    # Remove the student from the course
+    db.session.delete(enrollment)
+    
+    # Update the current student count in the course
+    course = Courses.query.filter_by(courseID=course_id).first()
+    if course:
+        course.currentStudents = max(0, course.currentStudents - 1)
+    db.session.commit()
+
+    return jsonify({"message": "Course dropped successfully", "updatedCourse": {
+        "courseID": course.courseID,
+        "courseName": course.courseName,
+        "teacherID": course.teacherID,
+        "courseTimes": course.courseTimes,
+        "maxStudents": course.maxStudents,
+        "currentStudents": course.currentStudents
+    }}), 200
+
+
+#teacher
+@app.route('/api/teacher/<int:teacher_id>/courses', methods=['GET'])
+def get_teacher_courses(teacher_id):
+    courses = Courses.query.filter_by(teacherID=teacher_id).all()
+    course_list = [
+        {
+            "courseID": course.courseID,
+            "courseName": course.courseName,
+            "teacherName": Teachers.query.filter_by(teacherID=course.teacherID).first().teacherName,
+            "courseTimes": course.courseTimes,
+            "maxStudents": course.maxStudents,
+            "currentStudents": course.currentStudents
+        }
+        for course in courses
+    ]
+    return jsonify(course_list), 200
+
+
+#get students in courses
+@app.route('/api/course/<int:course_id>/students', methods=['GET'])
+def get_course_students(course_id):
+    enrollments = Grades.query.filter_by(courseID=course_id).all()
+    student_list = [
+        {
+            "studentID": enrollment.studentID,
+            "studentName": Students.query.filter_by(studentID=enrollment.studentID).first().studentName,
+            "grade": enrollment.grade
+        }
+        for enrollment in enrollments
+    ]
+    return jsonify(student_list), 200
+
+
+#Update student grade
+@app.route('/api/course/<int:course_id>/student/<int:student_id>/grade', methods=['POST'])
+def update_student_grade(course_id, student_id):
+    data = request.json
+    new_grade = data.get('grade')
+
+    enrollment = Grades.query.filter_by(courseID=course_id, studentID=student_id).first()
+    if not enrollment:
+        return jsonify({"message": "Enrollment not found"}), 404
+
+    enrollment.grade = new_grade
+    db.session.commit()
+    
+    return jsonify({"message": "Grade updated successfully"}), 200
 
 
 if __name__ == '__main__':
