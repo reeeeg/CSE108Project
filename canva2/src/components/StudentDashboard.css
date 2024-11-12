@@ -1,0 +1,73 @@
+.dashboard {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+    color: #003366;
+}
+
+.course-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    color: white;
+    background-color: #2a5298;
+}
+
+.active-tab {
+    background-color: #1a4278;
+}
+
+.course-container {
+    display: flex;
+    justify-content: center;
+}
+
+.course-table {
+    width: 80%;
+    border-collapse: collapse;
+}
+
+.course-table th, .course-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.course-table th {
+    background-color: #2a5298;
+    color: white;
+}
+
+.add-button, .drop-button {
+    padding: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.add-button {
+    color: green;
+}
+
+.drop-button {
+    color: red;
+}
+
+.error {
+    color: red;
+    text-align: center;
+}

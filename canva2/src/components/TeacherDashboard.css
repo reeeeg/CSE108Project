@@ -1,0 +1,64 @@
+.dashboard {
+    background-color: #dbe8f4;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    font-size: 1.5rem;
+}
+
+.logout-link {
+    background-color: transparent;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.course-list, .student-list {
+    margin-top: 20px;
+}
+
+.course-table, .student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.course-table th, .student-table th,
+.course-table td, .student-table td {
+    border: 1px solid #888;
+    padding: 8px;
+    text-align: center;
+}
+
+.course-link {
+    background: none;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.back-button {
+    background: #ccc;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.grade-input {
+    width: 60px;
+    padding: 5px;
+    text-align: center;
+}
