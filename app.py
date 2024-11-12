@@ -144,14 +144,15 @@ def login():
     data = request.json
     user_id = data.get('userID')
     password = data.get('password')
-    is_teacher = data.get('isTeacher')
+    #is_teacher = data.get('isTeacher')
 
     # Check if a user with the given userID and isTeacher status exists
-    user = Login.query.filter_by(userID=user_id, isTeacher=is_teacher).first()
+    user = Login.query.filter_by(userID=user_id).first() #removed , isTeacher=is_teacher
+    is_teacher = user.isTeacher
 
     # Validate password if user is found
     if user and user.password == password:
-        return jsonify({"success": True, "userID": user_id, "isTeacher": is_teacher})
+        return jsonify({"success": True, "userID": user_id, "isTeacher": is_teacher })
     else:
         return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
@@ -274,4 +275,4 @@ def update_student_grade(course_id, student_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5002)

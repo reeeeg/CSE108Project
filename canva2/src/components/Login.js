@@ -5,17 +5,18 @@ import './Login.css';
 const Login = ({ onLogin }) => {
     const [userID, setUserID] = useState('');
     const [password, setPassword] = useState('');
-    const [isTeacher, setIsTeacher] = useState(false);
+    const [is_Teacher, setIsTeacher] = useState(false);
     const [error, setError] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/login', { userID, password, isTeacher });
+            const response = await axios.post('/api/login', { userID, password}); //removed isTeacher from bar
             
             if (response.data.success) {
                 // Pass both user type and ID to the App component
-                onLogin(isTeacher, userID); 
+                console.log(response.data.isTeacher);
+                onLogin(userID, response.data.isTeacher);
             } else {
                 setError('Invalid credentials');
             }
@@ -47,14 +48,15 @@ const Login = ({ onLogin }) => {
                         required
                     />
                 </div>
-                <div>
+                
+                {/* <div>
                     <label>Are you a teacher?</label>
                     <input
                         type="checkbox"
                         checked={isTeacher}
                         onChange={(e) => setIsTeacher(e.target.checked)}
                     />
-                </div>
+                </div> */}
                 <button type="submit">Login</button>
             </form>
         </div>

@@ -8,7 +8,8 @@ function App() {
     const [userType, setUserType] = useState(null);
     const [userID, setUserID] = useState(null);
 
-    const handleLogin = (isTeacher, id) => {
+    const handleLogin = (id, isTeacher) => {
+        console.log(isTeacher, id);
         setUserType(isTeacher ? 'teacher' : 'student');
         setUserID(id);
         setCurrentPage(isTeacher ? 'teacherDashboard' : 'studentDashboard');
