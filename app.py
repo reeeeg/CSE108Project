@@ -101,6 +101,7 @@ def get_all_courses():
             "courseID": course.courseID,
             "courseName": course.courseName,
             "teacherID": course.teacherID,
+            "teacherName": Teachers.query.filter_by(teacherID=course.teacherID).first().teacherName,
             "courseTimes": course.courseTimes,
             "maxStudents": course.maxStudents,
             "currentStudents": course.currentStudents
@@ -123,11 +124,13 @@ def get_student_courses(student_id):
     course_list = []
     for student_course in student_courses:
         course = Courses.query.filter_by(courseID=student_course.courseID).first()
+        teacher = Teachers.query.filter_by(teacherID=course.teacherID).first() if course else None
         if course:
             course_list.append({
                 "courseID": course.courseID,
                 "courseName": course.courseName,
                 "teacherID": course.teacherID,
+                "teacherName": teacher.teacherName if teacher else "N/A",
                 "courseTimes": course.courseTimes,
                 "maxStudents": course.maxStudents,
                 "currentStudents": course.currentStudents
@@ -183,12 +186,17 @@ def add_course(student_id):
     
     # Update the current student count in the course
     course.currentStudents = Grades.query.filter_by(courseID=course_id).count()
+    #course.currentStudents += 1
     db.session.commit()
+
+    #return information about teacher
+    teacher = Teachers.query.filter_by(teacherID=course.teacherID).first()
 
     return jsonify({"message": "Course added successfully", "updatedCourse": {
         "courseID": course.courseID,
         "courseName": course.courseName,
         "teacherID": course.teacherID,
+        "teacherName": teacher.teacherName if teacher else "N/A",
         "courseTimes": course.courseTimes,
         "maxStudents": course.maxStudents,
         "currentStudents": course.currentStudents
@@ -215,10 +223,13 @@ def drop_course(student_id):
         course.currentStudents = max(0, course.currentStudents - 1)
     db.session.commit()
 
+    teacher = Teachers.query.filter_by(teacherID=course.teacherID).first()
+
     return jsonify({"message": "Course dropped successfully", "updatedCourse": {
         "courseID": course.courseID,
         "courseName": course.courseName,
         "teacherID": course.teacherID,
+        "teacherName": teacher.teacherName if teacher else "N/A",
         "courseTimes": course.courseTimes,
         "maxStudents": course.maxStudents,
         "currentStudents": course.currentStudents

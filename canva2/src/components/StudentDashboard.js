@@ -32,6 +32,7 @@ function StudentDashboard({ studentID, onLogout }) {
         }
     }, [studentID, isLoading]);
 
+    /*
     useEffect(() => {
         if (availableCourses.length > 0 && myCourses.length > 0) {
             // filter out courses that the student is already enrolled in
@@ -40,13 +41,18 @@ function StudentDashboard({ studentID, onLogout }) {
             setAvailableCourses(filteredAvailableCourses);
         }
     }, [myCourses, availableCourses]);
+    */
 
     const handleAddCourse = (courseID) => {
         axios.post(`/api/student/${studentID}/courses/add`, { courseID })
             .then((response) => {
                 const updatedCourse = response.data.updatedCourse;
                 setMyCourses(prev => [...prev, updatedCourse]);
-                setAvailableCourses(prev => prev.filter(course => course.courseID !== courseID));
+                setAvailableCourses(prev => prev.map(course =>
+                    course.courseID === courseID 
+                        ? { ...course, currentStudents: updatedCourse.currentStudents, isEnrolled: true  } 
+                        : course
+                ));
                 setError(null);
             })
             .catch(() => setError('Error adding course. Please try again.'));
@@ -56,7 +62,11 @@ function StudentDashboard({ studentID, onLogout }) {
         axios.post(`/api/student/${studentID}/courses/drop`, { courseID })
             .then((response) => {
                 const updatedCourse = response.data.updatedCourse;
-                setAvailableCourses(prev => [...prev, updatedCourse]);
+                setAvailableCourses(prev => prev.map(course =>
+                    course.courseID === courseID 
+                        ? { ...course, currentStudents: updatedCourse.currentStudents, isEnrolled: false } 
+                        : course
+                ));
                 setMyCourses(prev => prev.filter(course => course.courseID !== courseID));
                 setError(null);
             })
@@ -72,7 +82,7 @@ function StudentDashboard({ studentID, onLogout }) {
                         <th>Teacher</th>
                         <th>Time</th>
                         <th>Students Enrolled</th>
-                        <th>Add/Drop</th>
+                        {/*  <th>Add/Drop</th>  */}
                     </tr>
                 </thead>
                 <tbody>
@@ -82,9 +92,11 @@ function StudentDashboard({ studentID, onLogout }) {
                             <td>{course.teacherName}</td>
                             <td>{course.courseTimes}</td>
                             <td>{course.currentStudents}/{course.maxStudents}</td>
+                            {/*
                             <td>
                                 <button onClick={() => handleDropCourse(course.courseID)} className="drop-button">-</button>
                             </td>
+                            */}
                         </tr>
                     ))}
                 </tbody>
@@ -112,7 +124,11 @@ function StudentDashboard({ studentID, onLogout }) {
                             <td>{course.courseTimes}</td>
                             <td>{course.currentStudents}/{course.maxStudents}</td>
                             <td>
-                                <button onClick={() => handleAddCourse(course.courseID)} className="add-button">+</button>
+                            {myCourses.some(enrolledCourse => enrolledCourse.courseID === course.courseID) ? (
+                                    <button onClick={() => handleDropCourse(course.courseID)} className="drop-button">-</button>
+                                ) : (
+                                    <button onClick={() => handleAddCourse(course.courseID)} className="add-button">+</button>
+                                )}
                             </td>
                         </tr>
                     ))}
