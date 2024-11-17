@@ -8,6 +8,8 @@ function TeacherDashboard({ teacherID, onLogout }) {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
 
+    let [teacherName, setTeacherName] = useState('Instructor');
+
     // Fetch courses taught by the teacher
     useEffect(() => {
         axios.get(`/api/teacher/${teacherID}/courses`)
@@ -38,6 +40,8 @@ function TeacherDashboard({ teacherID, onLogout }) {
             })
             .catch(() => setError('Error updating grade. Please try again.'));
     };
+
+    console.log(courses);
 
     // Course list
     const renderCourseList = () => (
@@ -104,7 +108,7 @@ function TeacherDashboard({ teacherID, onLogout }) {
     return (
         <div className="dashboard">
             <div className="header">
-                <h2>Welcome, Instructor!</h2>
+                <h2>Welcome, {teacherName}!</h2>
                 <button onClick={() => {console.log("Sign out button clicked"); onLogout();}} className="logout-link">Sign out</button>
             </div>
             <h1>UC Merced</h1>

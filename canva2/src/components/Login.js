@@ -16,7 +16,7 @@ const Login = ({ onLogin }) => {
             if (response.data.success) {
                 // Pass both user type and ID to the App component
                 console.log(response.data.isTeacher);
-                onLogin(userID, response.data.isTeacher);
+                onLogin(userID, password, response.data.isTeacher);
             } else {
                 setError('Invalid credentials');
             }
