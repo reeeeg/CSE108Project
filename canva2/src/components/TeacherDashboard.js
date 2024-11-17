@@ -17,6 +17,12 @@ function TeacherDashboard({ teacherID, onLogout }) {
             .catch(() => setError('Error fetching your courses. Please try again.'));
     }, [teacherID]);
 
+    useEffect(() => {
+        if (courses.length > 0) {
+            setTeacherName(courses[0].teacherName);
+        }
+    }, [courses]);
+
     // Fetch students for the selected course
     const fetchStudents = (courseID) => {
         axios.get(`/api/course/${courseID}/students`)
@@ -41,7 +47,7 @@ function TeacherDashboard({ teacherID, onLogout }) {
             .catch(() => setError('Error updating grade. Please try again.'));
     };
 
-    console.log(courses);
+
 
     // Course list
     const renderCourseList = () => (
