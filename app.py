@@ -280,4 +280,4 @@ def update_student_grade(course_id, student_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=3000)
