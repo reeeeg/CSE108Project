@@ -1,64 +1,190 @@
-.dashboard {
-    background-color: #dbe8f4;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    border-radius: 10px;
+/* General Reset */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #43cea2, #185a9d);
+    color: #333;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+/* Dashboard Layout */
+.dashboard {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header Section */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .header h2 {
-    font-size: 1.5rem;
+    margin: 0;
+    color: #185a9d;
 }
 
 .logout-link {
-    background-color: transparent;
+    background: #e74c3c;
+    color: #fff;
     border: none;
-    color: blue;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
     cursor: pointer;
-    text-decoration: underline;
+    font-size: 1rem;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
+.logout-link:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.logout-link:active {
+    transform: translateY(0);
+}
+
+.logout-link:focus {
+    outline: none;
+}
+
+/* Error Message */
+.error {
+    color: #e74c3c;
+    background: #fdd;
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Course List */
 .course-list, .student-list {
-    margin-top: 20px;
+    margin-top: 1rem;
+}
+
+.course-list h2, .student-list h2 {
+    margin-bottom: 1rem;
+    color: #185a9d;
 }
 
 .course-table, .student-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-bottom: 2rem;
+    border: 1px solid #ddd;
 }
 
-.course-table th, .student-table th,
-.course-table td, .student-table td {
-    border: 1px solid #888;
-    padding: 8px;
+.course-table th, .course-table td, 
+.student-table th, .student-table td {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
     text-align: center;
 }
 
+.course-table th, .student-table th {
+    background: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+}
+
+.course-table tr:hover, .student-table tr:hover {
+    background: #f0f8ff;
+}
+
+/* Course Link Button */
 .course-link {
     background: none;
     border: none;
-    color: blue;
+    color: #2575fc;
+    font-size: 1rem;
     text-decoration: underline;
     cursor: pointer;
+    transition: color 0.3s ease;
 }
 
+.course-link:hover {
+    color: #185a9d;
+}
+
+.course-link:focus {
+    outline: none;
+}
+
+/* Back Button */
 .back-button {
-    background: #ccc;
+    background: #2575fc;
+    color: #fff;
     border: none;
-    padding: 10px;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
     cursor: pointer;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
+.back-button:hover {
+    background: #185a9d;
+    transform: translateY(-2px);
+}
+
+/* Grade Input */
 .grade-input {
     width: 60px;
-    padding: 5px;
+    padding: 0.4rem;
+    font-size: 1rem;
     text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.grade-input:focus {
+    outline: none;
+    border-color: #2575fc;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1.5rem;
+    }
+
+    .header h2 {
+        font-size: 1.4rem;
+    }
+
+    .logout-link, .back-button {
+        font-size: 0.9rem;
+    }
+
+    .grade-input {
+        width: 50px;
+    }
 }

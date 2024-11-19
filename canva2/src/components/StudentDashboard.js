@@ -9,6 +9,8 @@ function StudentDashboard({ studentID, onLogout }) {
     const [isLoading, setIsLoading] = useState(true);
     const [tab, setTab] = useState('yourCourses');
 
+    const [studentName, setStudentName] = useState("Student");
+
     useEffect(() => {
         if (isLoading) {
             // fetch student's courses
@@ -26,6 +28,16 @@ function StudentDashboard({ studentID, onLogout }) {
                     setError(null);
                 })
                 .catch(() => setError('Error fetching available courses. Please try again.'))
+                .finally(() => {
+                    setIsLoading(false);
+                });
+
+            axios.get(`/api/student/${studentID}`)
+                .then(response => {
+                    setStudentName(response.data.studentName);
+                    setError(null);
+                })
+                .catch(() => setError('Error fetching available student Name. Please try again.'))
                 .finally(() => {
                     setIsLoading(false);
                 });
@@ -72,6 +84,9 @@ function StudentDashboard({ studentID, onLogout }) {
             })
             .catch(() => setError('Error dropping course. Please try again.'));
     };
+    
+    // console.log("Ava:", availableCourses);
+    console.log("name: ", studentName);
 
     const renderCourseList = () => (
         <div className="course-container">
@@ -140,7 +155,7 @@ function StudentDashboard({ studentID, onLogout }) {
     return (
         <div className="dashboard">
             <div className="header">
-                <h2>Welcome, Student!</h2>
+                <h2>Welcome, {studentName}!</h2>
                 <button onClick={onLogout} className="logout-link">Sign out</button>
             </div>
             <h1>UC Merced</h1>

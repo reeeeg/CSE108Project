@@ -8,11 +8,15 @@ function App() {
     const [userType, setUserType] = useState(null);
     const [userID, setUserID] = useState(null);
 
-    const handleLogin = (id, isTeacher) => {
+    const handleLogin = (id, password, isTeacher) => {
         console.log(isTeacher, id);
         setUserType(isTeacher ? 'teacher' : 'student');
         setUserID(id);
         setCurrentPage(isTeacher ? 'teacherDashboard' : 'studentDashboard');
+    
+        if(id == "1234" && password == "admin"){
+            window.location.href = '/admin';
+        }
     };
 
     const handleLogout = () => {

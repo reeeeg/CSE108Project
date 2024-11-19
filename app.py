@@ -100,7 +100,7 @@ def get_all_courses():
         {
             "courseID": course.courseID,
             "courseName": course.courseName,
-            "teacherID": course.teacherID,
+            #"teacherID": course.teacherID,
             "teacherName": Teachers.query.filter_by(teacherID=course.teacherID).first().teacherName,
             "courseTimes": course.courseTimes,
             "maxStudents": course.maxStudents,
@@ -129,8 +129,8 @@ def get_student_courses(student_id):
             course_list.append({
                 "courseID": course.courseID,
                 "courseName": course.courseName,
-                "teacherID": course.teacherID,
-                "teacherName": teacher.teacherName if teacher else "N/A",
+                #"teacherID": course.teacherID,
+                "teacherName":  Teachers.query.filter_by(teacherID=course.teacherID).first().teacherName,
                 "courseTimes": course.courseTimes,
                 "maxStudents": course.maxStudents,
                 "currentStudents": course.currentStudents
@@ -138,7 +138,11 @@ def get_student_courses(student_id):
     
     return jsonify(course_list), 200
 
+@app.route('/api/student/<int:student_id>', methods=['GET'])
+def getStudentName(student_id):
+    studentName = Students.query.filter_by(studentID=student_id).first().studentName
 
+    return jsonify({"studentName": studentName})
 
 
 
